@@ -86,19 +86,21 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
-    #partyBtn {
-      padding: 10px 20px;
-      font-size: 18px;
+    #partyBtn, #dinnerLink {
+      padding: 14px 28px;
+      font-size: 22px;
       border-radius: 30px;
       background: #fff;
       color: #ff6b6b;
       border: none;
       cursor: pointer;
-      margin-bottom: 10px;
+      margin: 10px;
       transition: transform 0.3s, background 0.3s;
+      display: inline-block;
+      text-decoration: none;
     }
 
-    #partyBtn:hover {
+    #partyBtn:hover, #dinnerLink:hover {
       transform: scale(1.1);
       background: #ffe2e2;
     }
@@ -150,15 +152,33 @@
 
     @media (max-width: 500px) {
       .dance-floor {
-        width: 300px;
-        height: 300px;
+        width: 350px;
+        height: 350px;
       }
+
       .person {
-        transform: scale(0.8);
+        transform: scale(1.2);
       }
-      #partyBtn {
-        font-size: 16px;
-        padding: 8px 16px;
+
+      .message h1 {
+        font-size: 30px;
+      }
+
+      .message p {
+        font-size: 22px;
+      }
+
+      #partyBtn, #dinnerLink {
+        font-size: 24px;
+        padding: 16px 32px;
+      }
+
+      .hearts span {
+        font-size: 26px;
+      }
+
+      .click-heart {
+        font-size: 28px;
       }
     }
   </style>
@@ -166,6 +186,7 @@
 <body>
   <div class="message">
     <button id="partyBtn">🎉 Party Mode!</button>
+    <a href="dinner.html" id="dinnerLink">🍽️ Ready for Dinner</a>
     <h1>DANCE BABYYYYY! 💃🕺</h1>
     <p>Let’s Dance the Night Away!</p>
   </div>
@@ -183,9 +204,10 @@
     </div>
     <div class="hearts"></div>
   </div>
-  <audio id="bgMusic" src="https://www.bensound.com/bensound-music/bensound-dance.mp3" loop></audio>
+
+  <audio id="bgMusic" src="./images/bensound-dance.mp3" loop></audio>
+
   <script>
-    // Create confetti
     function createConfetti() {
       for (let i = 0; i < 50; i++) {
         const confetti = document.createElement('div');
@@ -203,7 +225,6 @@
       return colors[Math.floor(Math.random() * colors.length)];
     }
 
-    // Create hearts
     function createHearts() {
       const heartsContainer = document.querySelector('.hearts');
       for (let i = 0; i < 10; i++) {
@@ -215,7 +236,6 @@
       }
     }
 
-    // Click interaction
     document.addEventListener('click', function(e) {
       const heart = document.createElement('div');
       heart.className = 'click-heart';
@@ -226,14 +246,14 @@
       setTimeout(() => heart.remove(), 1000);
     });
 
-    // Initialize
     createConfetti();
     createHearts();
 
-    // Party mode button
     document.getElementById('partyBtn').addEventListener('click', () => {
       document.body.style.animation = 'partyLights 1s infinite';
       document.querySelector('.couple').style.animationDuration = '0.5s';
+      const music = document.getElementById('bgMusic');
+      music.play();
     });
   </script>
 </body>
