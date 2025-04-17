@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sushi & Wine Date Night 🍣🍷</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(90deg, #faf3e0, #e6d9c4);
+      font-family: 'Sawarabi Mincho', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dinner-container {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .message {
+      margin-bottom: 40px;
+      color: #4e2c2c;
+    }
+
+    h1 {
+      font-size: 3.2em;
+      margin: 0;
+      font-family: 'Sawarabi Mincho', serif;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin: 0;
+    }
+
+    .dinner-table {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .sushi-plate {
+      width: 300px;
+      height: 300px;
+      background: #fff9f3;
+      border-radius: 50%;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      position: relative;
+      animation: float 3s ease-in-out infinite;
+      border: 6px double #bfa77f;
+    }
+
+    .sushi-item {
+      position: absolute;
+      font-size: 2em;
+      transition: transform 0.3s;
+    }
+
+    .sushi-item:hover {
+      transform: translateY(-10px) scale(1.2) rotate(10deg);
+    }
+
+    .wine-glass {
+      width: 150px;
+      height: 250px;
+      position: relative;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .glass {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      clip-path: polygon(25% 0, 75% 0, 100% 100%, 0 100%);
+      border: 2px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .wine {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 80%;
+      background: #7a2f2f;
+      clip-path: polygon(25% 0, 75% 0, 100% 100%, 0 100%);
+      transition: height 0.5s;
+    }
+
+    .bubble {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 50%;
+      animation: bubble-rise 3s infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    @keyframes bubble-rise {
+      0% { transform: translateY(0); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-100px); opacity: 0; }
+    }
+
+    @keyframes heart-float {
+      0%, 100% { transform: translateY(0); opacity: 1; }
+      50% { transform: translateY(-60px); opacity: 0.5; }
+    }
+
+    /* Sakura Petal Animation */
+    .sakura {
+      position: absolute;
+      font-size: 1.5em;
+      animation: sakura-float 3s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes sakura-float {
+      from { transform: translateY(0) rotate(0deg); opacity: 1; }
+      to { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+    <audio id="bg-music" src="your-music.mp3" loop autoplay ></audio>
+  <audio id="pop-sound" autoplay src="./images/electronic-vlog-breeze-136392.mp3"></audio>
+  <div class="dinner-container">
+    <div class="message">
+      <h1>寿司とワインの夜 🍣🍷</h1>
+      <p>SUSHI FOR DINNER.</p>
+      <a href="message.html"> click for gifts  </a>
+    </div>
+
+    <div class="dinner-table">
+      <!-- Sushi Plate -->
+      <div class="sushi-plate">
+        <div class="sushi-item" style="top: 30%; left: 20%">🍣</div>
+        <div class="sushi-item" style="top: 45%; left: 55%">🍤</div>
+        <div class="sushi-item" style="top: 65%; left: 30%">🍙</div>
+        <div class="sushi-item" style="top: 75%; left: 70%">🥢</div>
+      </div>
+
+      <!-- Wine Glass -->
+      <div class="wine-glass">
+        <div class="glass"></div>
+        <div class="wine" id="wine-level"></div>
+        <div class="bubble" style="left: 30%; animation-delay: 0.5s"></div>
+        <div class="bubble" style="left: 50%; animation-delay: 1s"></div>
+        <div class="bubble" style="left: 70%; animation-delay: 1.5s"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const wine = document.getElementById('wine-level');
+    let wineLevel = 80;
+
+    function pourWine() {
+      wineLevel = wineLevel > 10 ? wineLevel - 10 : 80;
+      wine.style.height = wineLevel + '%';
+    }
+
+    setInterval(pourWine, 3000);
+
+    document.addEventListener('click', (e) => {
+      for (let i = 0; i < 3; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'sakura';
+        petal.textContent = '🌸';
+        petal.style.left = `${e.clientX}px`;
+        petal.style.top = `${e.clientY}px`;
+        petal.style.animationDuration = `${1.5 + Math.random()}s`;
+        document.body.appendChild(petal);
+        setTimeout(() => petal.remove(), 3000);
+      }
+    });
+  </script>
+</body>
+</html>
