@@ -1,5 +1,5 @@
 // Typing Effect
-const text = "HELLO";
+const text = "HELLO   LUKIE";
 let index = 0;
 const typingSpeed = 100;
 const typingElement = document.getElementById("typing-text");
