@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sushi Dog Run</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0f2b, #1c1c3a);
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #ffce4b;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      margin: 0;
+    }
+    #gameArea {
+      position: relative;
+      width: 100%;
+      height: 70vh;
+      background-image: url('./images/face.png');
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .sushi {
+      width: 70px;
+      height: 70px;
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      background-image: url('./images/nigiri.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      filter: drop-shadow(0 0 5px rgba(255,255,255,0.7));
+    }
+    .sushi:hover {
+      transform: scale(1.1) rotate(10deg);
+    }
+    .sushi:active {
+      transform: scale(1.3) rotate(20deg);
+    }
+    .dog {
+      width: 150px;
+      height: 100px;
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      transition: transform 0.2s ease;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/616/616408.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      z-index: 5;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .stat-box {
+      text-align: center;
+      padding: 0 20px;
+    }
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #ffce4b;
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    #endMessage {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.5rem;
+      background-color: rgba(0,0,0,0.8);
+      padding: 40px 60px;
+      border-radius: 20px;
+      color: #ffce4b;
+      z-index: 10;
+      text-align: center;
+      border: 3px solid #ffce4b;
+      box-shadow: 0 0 30px rgba(255,206,75,0.5);
+    }
+    #restartBtn {
+      margin-top: 20px;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, #ffce4b, #ff9a00);
+      border: none;
+      border-radius: 50px;
+      color: #1c1c3a;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(255,206,75,0.4);
+    }
+    #restartBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(255,206,75,0.6);
+    }
+    #restartBtn:active {
+      transform: translateY(1px);
+    }
+    .obstacle {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      bottom: 20px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/1046/1046857.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      z-index: 4;
+    }
+    .powerup {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/3174/3174808.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      filter: drop-shadow(0 0 10px rgba(255,0,255,0.7));
+      z-index: 3;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .combo-meter {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+    .combo-text {
+      color: #ff4b4b;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .instructions {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+    .dog-jump {
+      animation: jump 0.5s ease;
+    }
+    @keyframes jump {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-100px); }
+      100% { transform: translateY(0); }
+    }
+    .sushi-collected {
+      animation: collect 0.5s ease forwards;
+    }
+    @keyframes collect {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🐶 Sushi Dog Run 🍣</h1>
+      <div class="stats">
+        <div class="stat-box">
+          <div class="stat-value" id="score">0</div>
+          <div class="stat-label">Score</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="time">60</div>
+          <div class="stat-label">Seconds</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="highScore">0</div>
+          <div class="stat-label">High Score</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="multiplier">1x</div>
+          <div class="stat-label">Multiplier</div>
+        </div>
+      </div>
+    </header>
+    
+    <div id="gameArea">
+      <div class="dog" id="dog"></div>
+      <div id="endMessage">
+        <h2>🎉 Congratulations! 🎉</h2>
+        <p>You collected <span id="finalScore">0</span> sushi!</p>
+        <button id="restartBtn">Play Again</button>
+      </div>
+      <div class="combo-meter" id="comboMeter">
+        <div class="combo-text">COMBO! x<span id="comboCount">0</span></div>
+      </div>
+      <div class="instructions">
+        Click sushi to collect! Avoid obstacles. Collect powerups for bonuses!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Game elements
+    const gameArea = document.getElementById('gameArea');
+    const scoreDisplay = document.getElementById('score');
+    const timeDisplay = document.getElementById('time');
+    const highScoreDisplay = document.getElementById('highScore');
+    const multiplierDisplay = document.getElementById('multiplier');
+    const endMessage = document.getElementById('endMessage');
+    const finalScoreDisplay = document.getElementById('finalScore');
+    const restartBtn = document.getElementById('restartBtn');
+    const dog = document.getElementById('dog');
+    const comboMeter = document.getElementById('comboMeter');
+    const comboCount = document.getElementById('comboCount');
+    
+    // Game variables
+    let score = 0;
+    let highScore = localStorage.getItem('highScore') || 0;
+    let timeLeft = 60;
+    let gameEnded = false;
+    let gameStarted = false;
+    let multiplier = 1;
+    let combo = 0;
+    let lastSushiTime = 0;
+    let dogSpeed = 2;
+    let obstacleInterval;
+    let powerupInterval;
+    
+    // Initialize game
+    highScoreDisplay.textContent = highScore;
+    
+    // Event listeners
+    restartBtn.addEventListener('click', restartGame);
+    document.addEventListener('keydown', handleKeyPress);
+    gameArea.addEventListener('click', startGameOnClick);
+    
+    // Game functions
+    function startGameOnClick(e) {
+      if (!gameStarted && e.target.id === 'gameArea') {
+        gameStarted = true;
+        startGame();
+      }
+    }
+    
+    function startGame() {
+      score = 0;
+      timeLeft = 60;
+      multiplier = 1;
+      combo = 0;
+      gameEnded = false;
+      scoreDisplay.textContent = score;
+      timeDisplay.textContent = timeLeft;
+      multiplierDisplay.textContent = multiplier + 'x';
+      endMessage.style.display = 'none';
+      
+      // Start game loops
+      const sushiInterval = setInterval(createSushi, 800);
+      const dogInterval = setInterval(moveDog, 20);
+      const timeInterval = setInterval(updateTime, 1000);
+      obstacleInterval = setInterval(createObstacle, 3000);
+      powerupInterval = setInterval(createPowerup, 10000);
+      
+      // Stop intervals when game ends
+      function checkGameEnd() {
+        if (gameEnded) {
+          clearInterval(sushiInterval);
+          clearInterval(dogInterval);
+          clearInterval(timeInterval);
+          clearInterval(obstacleInterval);
+          clearInterval(powerupInterval);
+        } else {
+          requestAnimationFrame(checkGameEnd);
+        }
+      }
+      checkGameEnd();
+    }
+    
+    function createSushi() {
+      if (gameEnded) return;
+      
+      const sushi = document.createElement('div');
+      sushi.classList.add('sushi');
+      
+      // Random position (avoid edges)
+      const leftPos = Math.random() * (gameArea.offsetWidth - 100) + 50;
+      const topPos = Math.random() * (gameArea.offsetHeight - 150) + 50;
+      
+      sushi.style.left = `${leftPos}px`;
+      sushi.style.top = `${topPos}px`;
+      
+      // Random rotation for visual variety
+      sushi.style.transform = `rotate(${Math.random() * 360}deg)`;
+      
+      gameArea.appendChild(sushi);
+      
+      // Click handler with animation
+      sushi.addEventListener('click', () => {
+        if (gameEnded) return;
+        
+        // Combo system - bonus points for quick consecutive clicks
+        const now = Date.now();
+        if (now - lastSushiTime < 1500) {
+          combo++;
+          if (combo > 2) {
+            comboMeter.style.display = 'block';
+            comboCount.textContent = combo;
+          }
+        } else {
+          combo = 0;
+          comboMeter.style.display = 'none';
+        }
+        lastSushiTime = now;
+        
+        // Score calculation with combo multiplier
+        const pointsEarned = 1 * multiplier + Math.floor(combo / 3);
+        score += pointsEarned;
+        scoreDisplay.textContent = score;
+        
+        // Visual feedback
+        sushi.classList.add('sushi-collected');
+        
+        // Show points earned
+        const pointsPopup = document.createElement('div');
+        pointsPopup.textContent = `+${pointsEarned}`;
+        pointsPopup.style.position = 'absolute';
+        pointsPopup.style.left = sushi.style.left;
+        pointsPopup.style.top = sushi.style.top;
+        pointsPopup.style.color = '#ffce4b';
+        pointsPopup.style.fontWeight = 'bold';
+        pointsPopup.style.fontSize = '1.5rem';
+        pointsPopup.style.pointerEvents = 'none';
+        pointsPopup.style.transform = 'translate(-50%, -50%)';
+        pointsPopup.style.animation = 'floatUp 1s forwards';
+        
+        gameArea.appendChild(pointsPopup);
+        
+        // Remove elements after animation
+        setTimeout(() => {
+          sushi.remove();
+          pointsPopup.remove();
+        }, 500);
+      });
+      
+      // Remove sushi if not clicked after 3 seconds
+      setTimeout(() => {
+        if (gameArea.contains(sushi)) {
+          sushi.remove();
+          combo = 0;
+          comboMeter.style.display = 'none';
+        }
+      }, 3000);
+    }
+    
+    function createObstacle() {
+      if (gameEnded) return;
+      
+      const obstacle = document.createElement('div');
+      obstacle.classList.add('obstacle');
+      obstacle.style.left = `${gameArea.offsetWidth}px`;
+      gameArea.appendChild(obstacle);
+      
+      // Move obstacle from right to left
+      const obstacleMove = setInterval(() => {
+        if (gameEnded) {
+          clearInterval(obstacleMove);
+          return;
+        }
+        
+        const currentLeft = parseFloat(obstacle.style.left);
+        obstacle.style.left = `${currentLeft - 5}px`;
+        
+        // Check collision with dog
+        if (checkCollision(dog, obstacle)) {
+          // Penalty for hitting obstacle
+          score = Math.max(0, score - 5);
+          scoreDisplay.textContent = score;
+          multiplier = 1;
+          multiplierDisplay.textContent = multiplier + 'x';
+          combo = 0;
+          comboMeter.style.display = 'none';
+          
+          // Visual feedback
+          dog.classList.add('dog-jump');
+          setTimeout(() => {
+            dog.classList.remove('dog-jump');
+          }, 500);
+          
+          obstacle.remove();
+          clearInterval(obstacleMove);
+        }
+        
+        // Remove when off screen
+        if (currentLeft < -100) {
+          obstacle.remove();
+          clearInterval(obstacleMove);
+        }
+      }, 20);
+    }
+    
+    function createPowerup() {
+      if (gameEnded) return;
+      
+      const powerup = document.createElement('div');
+      powerup.classList.add('powerup');
+      
+      // Random position
+      const leftPos = Math.random() * (gameArea.offsetWidth - 100) + 50;
+      const topPos = Math.random() * (gameArea.offsetHeight - 150) + 50;
+      
+      powerup.style.left = `${leftPos}px`;
+      powerup.style.top = `${topPos}px`;
+      gameArea.appendChild(powerup);
+      
+      // Click handler
+      powerup.addEventListener('click', () => {
+        if (gameEnded) return;
+        
+        // Apply powerup effect
+        multiplier = 2;
+        multiplierDisplay.textContent = multiplier + 'x';
+        
+        // Visual feedback
+        powerup.style.animation = 'collect 0.5s forwards';
+        
+        // Show effect
+        const effect = document.createElement('div');
+        effect.textContent = '2x MULTIPLIER!';
+        effect.style.position = 'absolute';
+        effect.style.left = powerup.style.left;
+        effect.style.top = powerup.style.top;
+        effect.style.color = '#ff4bff';
+        effect.style.fontWeight = 'bold';
+        effect.style.fontSize = '1.2rem';
+        effect.style.pointerEvents = 'none';
+        effect.style.transform = 'translate(-50%, -50%)';
+        effect.style.animation = 'floatUp 1.5s forwards';
+        gameArea.appendChild(effect);
+        
+        // Remove after animation
+        setTimeout(() => {
+          powerup.remove();
+          effect.remove();
+        }, 500);
+        
+        // Reset multiplier after 10 seconds
+        setTimeout(() => {
+          multiplier = 1;
+          multiplierDisplay.textContent = multiplier + 'x';
+        }, 10000);
+      });
+      
+      // Remove after 5 seconds if not collected
+      setTimeout(() => {
+        if (gameArea.contains(powerup)) {
+          powerup.remove();
+        }
+      }, 5000);
+    }
+    
+    function moveDog() {
+      if (gameEnded) return;
+      
+      const currentLeft = parseFloat(dog.style.left || '0');
+      dog.style.left = `${currentLeft + dogSpeed}px`;
+      
+      // Loop dog from right to left
+      if (currentLeft > gameArea.offsetWidth) {
+        dog.style.left = '-100px';
+      }
+    }
+    
+    function updateTime() {
+      if (gameEnded) return;
+      
+      timeLeft--;
+      timeDisplay.textContent = timeLeft;
+      
+      if (timeLeft <= 0) {
+        endGame();
+      }
+      
+      // Increase difficulty as time runs out
+      if (timeLeft === 30) {
+        dogSpeed = 3;
+        clearInterval(obstacleInterval);
+        obstacleInterval = setInterval(createObstacle, 2000);
+      } else if (timeLeft === 15) {
+        dogSpeed = 4;
+        clearInterval(obstacleInterval);
+        obstacleInterval = setInterval(createObstacle, 1500);
+      }
+    }
+    
+    function endGame() {
+      gameEnded = true;
+      finalScoreDisplay.textContent = score;
+      
+      // Update high score
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('highScore', highScore);
+        highScoreDisplay.textContent = highScore;
+        endMessage.querySelector('h2').textContent = '🎉 New High Score! 🎉';
+      }
+      
+      endMessage.style.display = 'block';
+    }
+    
+    function restartGame() {
+      // Clear all existing game elements
+      document.querySelectorAll('.sushi, .obstacle, .powerup').forEach(el => el.remove());
+      gameStarted = false;
+      endMessage.style.display = 'none';
+    }
+    
+    function handleKeyPress(e) {
+      if (e.code === 'Space' && !gameStarted) {
+        startGame();
+      }
+    }
+    
+    function checkCollision(element1, element2) {
+      const rect1 = element1.getBoundingClientRect();
+      const rect2 = element2.getBoundingClientRect();
+      
+      return !(
+        rect1.right < rect2.left || 
+        rect1.left > rect2.right || 
+        rect1.bottom < rect2.top || 
+        rect1.top > rect2.bottom
+      );
+    }
+    
+    // Add float up animation dynamically
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes floatUp {
+        0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        100% { transform: translate(-50%, -150px) scale(1.5); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
