@@ -16,7 +16,7 @@
       background: linear-gradient(135deg, #0f0f2b, #1c1c3a);
       color: #fff;
       overflow: hidden;
-      height: 100vh;
+      height: auto;
     }
     .container {
       max-width: 1200px;
@@ -97,6 +97,14 @@
       font-size: 0.9rem;
       opacity: 0.8;
     }
+    @media (max-width: 500px) {
+        .stats {
+      display: flex;
+    flex-direction: column;
+    }
+    
+    }
+
     #endMessage {
       display: none;
       position: absolute;

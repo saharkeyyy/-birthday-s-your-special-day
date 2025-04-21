@@ -288,14 +288,17 @@ padding: 30px 60px;
     animation: bounce 1.5s ease-in-out infinite;
   }
   
-  .surprise-message .letter-text {
+  .surprise-message .letter-text  a{
     font-size: 30px;
     font-weight: bold;
     margin-top: 10px;
     text-align: center;
     opacity: 0;
     animation: fadeInText 2s ease-in-out 1s forwards;
-    color: wheat;
+    color: wheat !important;
+    align-items: center;
+    width: auto;
+    
   }
   
   @keyframes surpriseText {
